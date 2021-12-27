@@ -1,0 +1,42 @@
+.js_todo_app {
+	width: 70%;
+	margin: 0 auto;
+	margin-top: 50px;
+}
+li {
+	position: relative;
+    padding: 10px;
+    background: #ffffff;
+    margin: 10px;
+	border-radius: 5px;
+	padding-right: 70px;
+}
+li button {
+	position: absolute;
+	right: 10px;
+	top: 50%;
+	transform: translateY(-50%);
+}
+h1 {
+	font-size: 24px;
+	margin-bottom: 20px;
+}
+h2 {
+	font-size: 20px;
+	margin-bottom: 20px;
+	margin-left: 10px;
+	font-weight: bold;
+}
+.todo_task_table {
+	margin-top: 30px;
+	background: rgb(198, 236, 198);
+	border-radius: 5px;
+	padding: 10px 0 100px;
+}
+button {
+	/* background: orange;
+    border: none;
+    border-radius: 20px;
+    font-size: 10px;
+    padding: 10px; */
+}
