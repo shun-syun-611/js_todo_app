@@ -1,4 +1,3 @@
-    // console.log('hello')
     const taskValue = document.getElementsByClassName('task_value')[0];
     const taskSubmit = document.getElementsByClassName('task_submit')[0];
     const taskList = document.getElementsByClassName('task_list')[0];
@@ -17,8 +16,10 @@
         for (const item of listItems) {
             const stock_task = document.createTextNode(item.todoValue);
             const listItem = document.createElement("li");
-            const showItem = taskList.appendChild(listItem);
-            const showTask = showItem.appendChild(stock_task);
+            const pItem = document.createElement("p");
+            taskList.appendChild(listItem);
+            listItem.appendChild(pItem);
+            pItem.appendChild(stock_task);
 
             // 以下、二つの処理は後で細かく共通化できそう
             // 追加したタスクに削除ボタンを付与
@@ -37,9 +38,12 @@
     // 追加ボタンを作成
     const addTasks = (task) => {
         // 入力したタスクの追加
+        const pItem = document.createElement("p");
         const listItem = document.createElement("li");
-        const showItem = taskList.appendChild(listItem);
-        showItem.innerHTML = task;
+
+        taskList.appendChild(listItem);
+        listItem.appendChild(pItem);
+        pItem.innerHTML = task;
 
         // 追加したタスクに削除ボタンを付与
         const deleteButton = document.createElement("button");
@@ -57,6 +61,18 @@
     const deleteTasks = (deleteButton) => {
         const chosenTask = deleteButton.closest("li");
         taskList.removeChild(chosenTask);
+
+
+        // 削除ボタンを押したタスクをストレージから削除
+        const delbtnTxt = deleteButton.previousElementSibling;
+        const delValue = listItems.find(
+        (item) => item.todoValue === delbtnTxt.textContent
+        );
+        delValue.isDeleted = true;
+        const newlistItems = listItems.filter((item) => item.isDeleted === false);
+        listItems = newlistItems;
+        storage.store = JSON.stringify(listItems);
+
     }
 
     // 追加ボタンをクリックしたら、追加イベントを発火
@@ -76,5 +92,3 @@
             taskValue.value = '';
         }
     });
-
-    
