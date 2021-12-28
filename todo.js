@@ -6,7 +6,7 @@
     let listItems = [];
     const storage = localStorage;
 
-    // リロードされた時に、ローカルストレージの保存内容を表示
+    // ①リロードされた時に、ローカルストレージの保存内容を表示
     document.addEventListener("DOMContentLoaded", () => {
         const json = storage.store;
         if (json === undefined) {
@@ -21,17 +21,12 @@
             listItem.appendChild(pItem);
             pItem.appendChild(stock_task);
 
-            // 以下、二つの処理は後で細かく共通化できそう
             // 追加したタスクに削除ボタンを付与
             const deleteButton = document.createElement("button");
             deleteButton.innerHTML = "Delete";
             listItem.appendChild(deleteButton);
 
-            // 削除ボタンをクリックしたら、削除イベント発火
-            deleteButton.addEventListener("click", e => {
-                e.preventDefault();
-                deleteTasks(deleteButton);
-            });
+            deleteTasksClick(deleteButton);
             }
     });
 
@@ -50,20 +45,49 @@
         deleteButton.innerHTML = "Delete";
         listItem.appendChild(deleteButton);
 
-        // 削除ボタンをクリックしたら、削除イベント発火
-        deleteButton.addEventListener("click", e => {
-            e.preventDefault();
-            deleteTasks(deleteButton);
-        });
+        deleteTasksClick(deleteButton);
     };
+
+
+    // 追加ボタンをクリックしたら、追加イベント発火
+    taskSubmit.addEventListener('click', e => {
+        e.preventDefault();
+        addTaskStorage();
+    });
+
+    // 削除ボタンをクリックしたら、削除イベント発火
+    const deleteTasksClick = (deleteButton) => {
+        deleteButton.addEventListener("click", e => {
+        e.preventDefault();
+        deleteTasks(deleteButton);
+        });
+    }
 
     // 削除ボタンにタスクを消す機能を付与
     const deleteTasks = (deleteButton) => {
         const chosenTask = deleteButton.closest("li");
         taskList.removeChild(chosenTask);
+        deleteTasksStorage(deleteButton);
+    }
 
+    // 削除ボタンを押したタスクをストレージから追加
+    const addTaskStorage = () => {
+        const task = taskValue.value;
+        if (task !== ""){
+            const item = {
+                todoValue: task,
+                isDeleted: false
+            };
+            listItems.push(item);
+            storage.store = JSON.stringify(listItems);
+    
+            addTasks(task);
+            taskValue.value = '';
+        }
+    }
 
-        // 削除ボタンを押したタスクをストレージから削除
+    // 削除ボタンを押したタスクをストレージから削除
+    const deleteTasksStorage = (deleteButton) => {
         const delbtnTxt = deleteButton.previousElementSibling;
         const delValue = listItems.find(
         (item) => item.todoValue === delbtnTxt.textContent
@@ -72,23 +96,4 @@
         const newlistItems = listItems.filter((item) => item.isDeleted === false);
         listItems = newlistItems;
         storage.store = JSON.stringify(listItems);
-
     }
-
-    // 追加ボタンをクリックしたら、追加イベントを発火
-    taskSubmit.addEventListener('click', e => {
-        e.preventDefault();
-        const task = taskValue.value;
-        if (task !== ""){
-            // ローカルストレージに保存
-            const item = {
-                todoValue: task,
-                isDeleted: false
-            };
-            listItems.push(item);
-            storage.store = JSON.stringify(listItems);
-
-            addTasks(task);
-            taskValue.value = '';
-        }
-    });
