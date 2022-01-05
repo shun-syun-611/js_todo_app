@@ -5,7 +5,6 @@
     // ローカルストレージの初期化
     let listItems = [];
     const storage = localStorage;
-    console.log(storage);
 
     // ①リロードされた時に、ローカルストレージの保存内容を表示
     document.addEventListener("DOMContentLoaded", () => {
@@ -14,7 +13,6 @@
             return;
         }
         listItems = JSON.parse(json);
-        // console.log(listItems);
         for (const item of listItems) {
             const stock_task = document.createTextNode(item.todoValue);
             const listItem = document.createElement("li");
@@ -41,7 +39,6 @@
                 const chosenTask = doneButton.closest("li");
                 const chosenTaskTxt = chosenTask.firstElementChild;
                 chosenTaskTxt.setAttribute('class', 'js_done_text');
-                doneTasksStorage(doneButton);
             }
 
             deleteTasksClick(deleteButton);
@@ -107,8 +104,8 @@
     const doneTasks = (doneButton) => {
         const chosenTask = doneButton.closest("li");
         const chosenTaskTxt = chosenTask.firstElementChild;
-        chosenTaskTxt.setAttribute('class', 'js_done_text');
-        doneTasksStorage(doneButton);
+            chosenTaskTxt.classList.toggle('js_done_text');
+            doneTasksStorage(doneButton);
     }
 
     // 追加ボタンを押したタスクをストレージから追加
@@ -135,11 +132,17 @@
         const doneValue = listItems.find(
         (item) => item.todoValue === donebtnTxt.textContent
         );
-        doneValue.isDone = true;
-        const newlistItems = listItems;
-
-        listItems = newlistItems;
-        storage.store = JSON.stringify(listItems);
+        if(doneValue.isDone) {
+            doneValue.isDone = false;
+            const newlistItems = listItems;
+            listItems = newlistItems;
+            storage.store = JSON.stringify(listItems);
+        }else {
+            doneValue.isDone = true;
+            const newlistItems = listItems;
+            listItems = newlistItems;
+            storage.store = JSON.stringify(listItems);
+        }
     }
 
     // 削除ボタンを押したタスクをストレージから削除
