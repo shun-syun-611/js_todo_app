@@ -32,7 +32,7 @@
             doneButton.innerHTML = "Done";
             listItem.appendChild(doneButton);
 
-            // todoがdone状態だったら、打ち消し線をふ付与
+            // todoがdone状態だったら、打ち消し線を付与
             const doneTaskList = item.isDone;
             if (doneTaskList) {
                 const chosenTask = doneButton.closest("li");
@@ -40,7 +40,6 @@
                 chosenTaskTxt.setAttribute('class', 'js_done_text');
             }
             // 削除、完了のイベント設置
-            addTaskClick(taskSubmit);
             deleteTasksClick(deleteButton);
             doneTasksClick(doneButton);
             }
@@ -73,12 +72,10 @@
 
     // ボタンイベント設定
     // 追加ボタンをクリックしたら、追加イベント発火
-    const addTaskClick = (taskSubmit) => {
         taskSubmit.addEventListener('click', e => {
             e.preventDefault();
             addTaskStorage();
         });
-    }
     // 削除ボタンをクリックしたら、削除イベント発火
     const deleteTasksClick = (deleteButton) => {
         deleteButton.addEventListener("click", e => {
