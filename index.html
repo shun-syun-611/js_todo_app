@@ -5,7 +5,6 @@
  <title>JS ToDoアプリ</title>
  <meta name="description" content="サイトキャプションを入力">
  <meta name="keywords" content="サイトキーワードを,で区切って入力">
- <link rel="stylesheet" href="sample.css">
  <!--[if lt IE 9]>
  <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
  <script src="http://css3-mediaqueries-js.googlecode.com/svn/trunk/css3-mediaqueries.js"></script>
@@ -21,13 +20,13 @@
  <div class="js_todo_app">
     <h1>JS ToDoアプリ</h1>
     <form>
-        <input class="task_value" type="text">
-        <button class="task_submit" type="button">Add task</button>
+        <input id="task_value" type="text">
+        <button id="task_submit" type="button">Add task</button>
     </form>
 
     <div class="todo_task_table">
         <h2>todo_task</h2>
-        <ul class="task_list">
+        <ul id="task_list">
         </ul>
     </div>
 </div>
