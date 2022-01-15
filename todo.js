@@ -13,8 +13,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const listItems_new = storage.store && JSON.parse(storage.store);
     console.log(listItems_new);
     if (json !== undefined) {
-        listItems = JSON.parse(json);
-        // console.log(listItems);
+    listItems = JSON.parse(json);
+    // console.log(listItems);
     }
     for (const item of listItems) {
         const stock_task = document.createTextNode(item.todoValue);
@@ -31,30 +31,34 @@ document.addEventListener("DOMContentLoaded", () => {
         listItem.appendChild(deleteButton);
 
         // 追加したタスクに完了ボタンを付与
+        // const doneButton = document.createElement("button");
+        // doneButton.setAttribute('class', 'js_done_btn');
+        // doneButton.innerHTML = "Done";
+        // listItem.appendChild(doneButton);
         createDoneButton(listItem);
 
         // todoがdone状態だったら、打ち消し線を付与
         const doneTaskList = item.isDone;
-            if (doneTaskList) {
-                const chosenTask = doneButton.closest("li");
-                const chosenTaskTxt = chosenTask.firstElementChild;
-                chosenTaskTxt.setAttribute('class', 'js_done_text');
-            }
+        if (doneTaskList) {
+            const chosenTask = doneButton.closest("li");
+            const chosenTaskTxt = chosenTask.firstElementChild;
+            chosenTaskTxt.setAttribute('class', 'js_done_text');
+        }
         // 削除、完了のイベント設置
-        addTaskClick(taskSubmit);
         deleteTasksClick(deleteButton);
         doneTasksClick(doneButton);
         }
 });
 
-//追加したタスクに完了ボタンを付与
+// 追加したタスクに完了ボタンを付与
 const createDoneButton = (listItem) => {
     const doneButton = document.createElement("button");
     doneButton.setAttribute('class', 'js_done_btn');
     doneButton.innerHTML = "Done";
     listItem.appendChild(doneButton);
-    doneTasksClick(doneButton);
+    return doneButton;
 }
+
 
 // 入力したタスクの追加
 const addTasks = (task) => {
@@ -72,30 +76,33 @@ const addTasks = (task) => {
     deleteButton.innerHTML = "Delete";
     listItem.appendChild(deleteButton);
     deleteTasksClick(deleteButton);
-    
-    createDoneButton(listItem);
+
+    //追加したタスクに完了ボタンを付与
+    const doneButton = document.createElement("button");
+    doneButton.setAttribute('class', 'js_done_btn');
+    doneButton.innerHTML = "Done";
+    listItem.appendChild(doneButton); 
+    doneTasksClick(doneButton);
 };
 
 // ボタンイベント設定
 // 追加ボタンをクリックしたら、追加イベント発火
-const addTaskClick = (taskSubmit) => {
     taskSubmit.addEventListener('click', e => {
         e.preventDefault();
         addTaskStorage();
     });
-}
 // 削除ボタンをクリックしたら、削除イベント発火
 const deleteTasksClick = (deleteButton) => {
     deleteButton.addEventListener("click", e => {
-        e.preventDefault();
-        deleteTasks(deleteButton);
+    e.preventDefault();
+    deleteTasks(deleteButton);
     });
 }
 // 完了ボタンをクリックしたら、完了イベント発火
 const doneTasksClick = (doneButton) => {
     doneButton.addEventListener("click", e => {
-        e.preventDefault();
-        doneTasks(doneButton);
+    e.preventDefault();
+    doneTasks(doneButton);
     });
 }
 
@@ -136,15 +143,14 @@ const doneTasksStorage = (doneButton) => {
     const previousdeletebtn = doneButton.previousElementSibling;
     const donebtnTxt = previousdeletebtn.previousElementSibling;
     const doneValue = listItems.find(
-        (item) => item.todoValue === donebtnTxt.textContent
+    (item) => item.todoValue === donebtnTxt.textContent
     );
     if(doneValue.isDone) {
         doneValue.isDone = false;
         const newlistItems = listItems;
         listItems = newlistItems;
         storage.store = JSON.stringify(listItems);
-    }
-    else {
+    }else {
         doneValue.isDone = true;
         const newlistItems = listItems;
         listItems = newlistItems;
@@ -155,8 +161,8 @@ const doneTasksStorage = (doneButton) => {
 const deleteTasksStorage = (deleteButton) => {
     const delbtnTxt = deleteButton.previousElementSibling;
     const delValue = listItems.find(
-        (item) => item.todoValue === delbtnTxt.textContent
-        );
+    (item) => item.todoValue === delbtnTxt.textContent
+    );
     delValue.isDeleted = true;
     const newlistItems = listItems.filter((item) => item.isDeleted === false);
     listItems = newlistItems;
