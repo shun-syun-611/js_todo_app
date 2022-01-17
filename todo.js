@@ -5,87 +5,73 @@ const taskList = document.getElementById('task_list');
 // ローカルストレージの初期化
 let listItems = [];
 const storage = localStorage;
-const json = storage.store;
 
 // ローカルストレージの保存内容を表示
 document.addEventListener("DOMContentLoaded", () => {
-    // console.log(json);
-    const listItems_new = storage.store && JSON.parse(storage.store);
-    console.log(listItems_new);
-    if (json !== undefined) {
-    listItems = JSON.parse(json);
-    // console.log(listItems);
-    }
-    for (const item of listItems) {
-        const stock_task = document.createTextNode(item.todoValue);
-        const listItem = document.createElement("li");
-        const pItem = document.createElement("p");
-        taskList.appendChild(listItem);
-        listItem.appendChild(pItem);
-        pItem.appendChild(stock_task);
-
-        // 追加したタスクに削除ボタンを付与
-        const deleteButton = document.createElement("button");
-        deleteButton.setAttribute('class', 'js_delete_btn');
-        deleteButton.innerHTML = "Delete";
-        listItem.appendChild(deleteButton);
-
-        // 追加したタスクに完了ボタンを付与
-        // const doneButton = document.createElement("button");
-        // doneButton.setAttribute('class', 'js_done_btn');
-        // doneButton.innerHTML = "Done";
-        // listItem.appendChild(doneButton);
-        createDoneButton(listItem);
-
-        // todoがdone状態だったら、打ち消し線を付与
-        const doneTaskList = item.isDone;
-        if (doneTaskList) {
-            const chosenTask = doneButton.closest("li");
-            const chosenTaskTxt = chosenTask.firstElementChild;
-            chosenTaskTxt.setAttribute('class', 'js_done_text');
-        }
-        // 削除、完了のイベント設置
-        deleteTasksClick(deleteButton);
-        doneTasksClick(doneButton);
-        }
+    queryTasksStorage();
+    showTasksStorage();
+    console.log(listItems);
 });
 
+/* ---------------
+ボタン作成
+----------------*/
+const createButton = () => {
+    const createButton = document.createElement("button");
+    return createButton;
+} 
+
+// 追加したタスクに削除ボタンを付与
+const createDeleteButton = (listItem) => {
+    const deleteButton = createButton();
+    deleteButton.setAttribute('class', 'js_delete_btn');
+    deleteButton.innerHTML = "Delete";
+    listItem.appendChild(deleteButton);
+    return deleteButton;
+}
 // 追加したタスクに完了ボタンを付与
 const createDoneButton = (listItem) => {
-    const doneButton = document.createElement("button");
+    const doneButton = createButton();
     doneButton.setAttribute('class', 'js_done_btn');
     doneButton.innerHTML = "Done";
     listItem.appendChild(doneButton);
     return doneButton;
 }
 
+// todoがdone状態だったら、打ち消し線を付与
+const showDoneTaskList = (item, doneButton) => {
+    const doneTaskList = item.isDone;
+    if (doneTaskList) {
+        const chosenTask = doneButton.closest("li");
+        const chosenTaskTxt = chosenTask.firstElementChild;
+        chosenTaskTxt.setAttribute('class', 'js_done_text');
+    }
+}
 
-// 入力したタスクの追加
+/* ---------------
+タスク作成
+----------------*/
+// 新しいタスクの追加
 const addTasks = (task) => {
-    // 入力したタスク内容の追加
+    const listItem = createAddTask(task);
+    const deleteButton = createDeleteButton(listItem);
+    const doneButton = createDoneButton(listItem);
+    deleteTasksClick(deleteButton);
+    doneTasksClick(doneButton);
+};
+// 入力したタスク内容の追加
+const createAddTask = (task) => {
     const pItem = document.createElement("p");
     const listItem = document.createElement("li");
-
     taskList.appendChild(listItem);
     listItem.appendChild(pItem);
     pItem.innerHTML = task;
+    return listItem;
+}
 
-    // 追加したタスクに削除ボタンを付与
-    const deleteButton = document.createElement("button");
-    deleteButton.setAttribute('class', 'js_delete_btn');
-    deleteButton.innerHTML = "Delete";
-    listItem.appendChild(deleteButton);
-    deleteTasksClick(deleteButton);
-
-    //追加したタスクに完了ボタンを付与
-    const doneButton = document.createElement("button");
-    doneButton.setAttribute('class', 'js_done_btn');
-    doneButton.innerHTML = "Done";
-    listItem.appendChild(doneButton); 
-    doneTasksClick(doneButton);
-};
-
-// ボタンイベント設定
+/* ---------------
+イベント設定
+----------------*/
 // 追加ボタンをクリックしたら、追加イベント発火
     taskSubmit.addEventListener('click', e => {
         e.preventDefault();
@@ -106,7 +92,9 @@ const doneTasksClick = (doneButton) => {
     });
 }
 
-// ボタン機能追加
+/* ---------------
+機能追加
+----------------*/
 // 削除ボタンにタスクを消す機能を付与
 const deleteTasks = (deleteButton) => {
     const chosenTask = deleteButton.closest("li");
@@ -121,8 +109,35 @@ const doneTasks = (doneButton) => {
     doneTasksStorage(doneButton);
 }
 
-// ストレージ処理
-// 追加ボタンを押したタスクをストレージへ追加
+/* ---------------
+ストレージ処理
+----------------*/
+// ローカルストレージの保存内容の表示
+const showTasksStorage = () => {
+    for (const item of listItems) {
+        const listItem = showTaskList(item);
+        const deleteButton = createDeleteButton(listItem);
+        const doneButton = createDoneButton(listItem);
+        showDoneTaskList(item,doneButton);
+        deleteTasksClick(deleteButton);
+        doneTasksClick(doneButton);
+    }
+}
+//ローカルストレージの保存内容の取得
+const queryTasksStorage = () => {
+    listItems = storage.store && JSON.parse(storage.store);    
+}
+// ローカルストレージの保存内容の表示内容の作成
+const showTaskList = (item) => {
+    const stock_task = document.createTextNode(item.todoValue);
+    const listItem = document.createElement("li");
+    const pItem = document.createElement("p");
+    taskList.appendChild(listItem);
+    listItem.appendChild(pItem);
+    pItem.appendChild(stock_task);
+    return listItem;
+}
+// タスクをローカルストレージへ追加
 const addTaskStorage = () => {
     const task = taskValue.value;
     if (task){
@@ -138,13 +153,20 @@ const addTaskStorage = () => {
         taskValue.value = '';
     }
 }
-// 完了ボタンを押したタスクの完了状態をストレージへ追加
+// タスクの完了状態をローカルストレージへ追加
 const doneTasksStorage = (doneButton) => {
     const previousdeletebtn = doneButton.previousElementSibling;
     const donebtnTxt = previousdeletebtn.previousElementSibling;
     const doneValue = listItems.find(
     (item) => item.todoValue === donebtnTxt.textContent
     );
+
+    const doneValueStatus = (doneValue) => {
+        const doneValueStatus = doneValue.isDone;
+        return doneValueStatus;
+    }
+
+    console.log(doneValueStatus(doneValue));
     if(doneValue.isDone) {
         doneValue.isDone = false;
         const newlistItems = listItems;
@@ -157,7 +179,7 @@ const doneTasksStorage = (doneButton) => {
         storage.store = JSON.stringify(listItems);
     }
 }
-// 削除ボタンを押したタスクをストレージから削除
+// タスクをローカルストレージから削除
 const deleteTasksStorage = (deleteButton) => {
     const delbtnTxt = deleteButton.previousElementSibling;
     const delValue = listItems.find(
