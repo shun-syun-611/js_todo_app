@@ -80,17 +80,24 @@ const createAddTask = (task) => {
 // 削除ボタンをクリックしたら、削除イベント発火
 const deleteTasksClick = (deleteButton) => {
     deleteButton.addEventListener("click", e => {
-    e.preventDefault();
-    deleteTasks(deleteButton);
+        e.preventDefault();
+        const chosenTask = deleteButton.previousSibling;
+        const chosenTaskText = chosenTask.textContent;
+        if(window.confirm(`本当に「${chosenTaskText}」を削除してよろしいですか？`)) {
+            deleteTasks(deleteButton);
+        }
     });
 }
 // 完了ボタンをクリックしたら、完了イベント発火
 const doneTasksClick = (doneButton) => {
     doneButton.addEventListener("click", e => {
-    e.preventDefault();
-    doneTasks(doneButton);
+        e.preventDefault();
+        doneTasks(doneButton);
     });
 }
+
+// 削除ボタンをクリックした時の確認
+
 
 /* ---------------
 機能追加
