@@ -45,7 +45,6 @@ selectMonthBox.addEventListener("change", e => {
     select_day.innerHTML = "";
     const updatedMonth = e.target.value;
     createOption("select_day", 1, datesOfMonth[updatedMonth - 1], 1);
-    console.log(datesOfMonth);
 });
 // 年の変更時に、日を1日にして、月に合わせた日数に更新
 selectYearBox.addEventListener("change", e => {
@@ -54,7 +53,6 @@ selectYearBox.addEventListener("change", e => {
     const updateYear = e.target.value;
     datesOfFebruary = isLeapYear(updateYear) ? 29 : 28;
     datesOfMonth = [31, datesOfFebruary, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-    console.log(datesOfMonth);
     createOption("select_month", 1, 12, 1);
     createOption("select_day", 1, datesOfMonth[0], 1);
 });
@@ -230,21 +228,23 @@ const showDeadLine = (item, listItem) => {
 }
 // タスクをローカルストレージへ追加
 const addTaskStorage = () => {
-    const task = taskValue.value;
-    const deadLine = "期限日: " + deadLineAdd();
-    if (task){
-        const item = {
-            todoValue: task,
-            isDeleted: false,
-            isDone: false,
-            deadLine: deadLine
-        };
-        listItems.push(item);
-        storage.store = JSON.stringify(listItems);
+    const task = taskValue.value.trim();
+    // if (task !== "") {
+        const deadLine = "期限日: " + deadLineAdd();
+        if (task){
+            const item = {
+                todoValue: task,
+                isDeleted: false,
+                isDone: false,
+                deadLine: deadLine
+            };
+            listItems.push(item);
+            storage.store = JSON.stringify(listItems);
 
-        addTasks(task);
-        taskValue.value = '';
-    }
+            addTasks(task);
+            taskValue.value = '';
+        }
+    // }
 }
 // タスクの完了状態をローカルストレージへ追加
 const doneTasksStorage = (doneButton) => {
