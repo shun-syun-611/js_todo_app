@@ -1,6 +1,63 @@
 const taskValue = document.getElementById('task_value');
 const taskSubmit = document.getElementById('task_submit');
 const taskList = document.getElementById('task_list');
+let select_year = document.getElementById("select_year");
+let select_month = document.getElementById("select_month");
+let select_day = document.getElementById("select_day");
+
+const date = new Date();
+const thisYear = date.getFullYear();
+const thisMonth = date.getMonth();
+const thisDate = date.getDate();
+const isLeapYear = year => (year % 4 === 0) && (year % 100 !== 0) || (year % 400 === 0);
+let datesOfFebruary = isLeapYear(thisYear) ? 29 : 28;
+let datesOfMonth = [31, datesOfFebruary, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+
+// 年月日を生成する関数
+const createOption = (id, startNum, endNum, current) => {
+    const selectDom = document.getElementById(id);
+    for (let i = startNum; i <= endNum; i++) {
+        if (i == current) {
+            const option = document.createElement("option");
+            option.innerText = i;
+            option.setAttribute("selected", true);
+            selectDom.appendChild(option);
+        }
+        else {
+            const option = document.createElement("option");
+            option.innerText = i;
+            selectDom.appendChild(option);
+        }
+    }
+}
+
+// リアルタイムの年月日を初期表示
+createOption("select_year", thisYear, thisYear + 10, thisYear);
+createOption("select_month", 1, 12, thisMonth);
+createOption("select_day", 1, datesOfMonth[thisMonth], thisDate);
+
+const selectYearBox = select_year
+const selectMonthBox = select_month;
+const selectDayBox = select_day;
+
+// 月の変更時に、日を1日にして、月に合わせた日数に更新
+selectMonthBox.addEventListener("change", e => {
+    select_day.innerHTML = "";
+    const updatedMonth = e.target.value;
+    createOption("select_day", 1, datesOfMonth[updatedMonth - 1], 1);
+    console.log(datesOfMonth);
+});
+// 年の変更時に、日を1日にして、月に合わせた日数に更新
+selectYearBox.addEventListener("change", e => {
+    select_month.innerHTML = "";
+    select_day.innerHTML = "";
+    const updateYear = e.target.value;
+    datesOfFebruary = isLeapYear(updateYear) ? 29 : 28;
+    datesOfMonth = [31, datesOfFebruary, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+    console.log(datesOfMonth);
+    createOption("select_month", 1, 12, 1);
+    createOption("select_day", 1, datesOfMonth[0], 1);
+});
 
 // ローカルストレージの初期化
 let listItems = [];
@@ -47,6 +104,15 @@ const showDoneTaskList = (item, doneButton) => {
         chosenTaskTxt.setAttribute('class', 'js_done_text');
     }
 }
+// 追加したタスクに期限日を付与
+const createDeatLineText = (listItem) => {
+    const deadLineText = document.createElement("p");
+    const deadLineAddText = deadLineAdd();
+    deadLineText.setAttribute('class', 'js_deadline');
+    deadLineText.innerHTML = "期限日: " + deadLineAddText;
+    listItem.appendChild(deadLineText);
+    return deadLineText;
+}
 
 /* ---------------
 タスク作成
@@ -56,8 +122,10 @@ const addTasks = (task) => {
     const listItem = createAddTask(task);
     const deleteButton = createDeleteButton(listItem);
     const doneButton = createDoneButton(listItem);
+    const deadLineText = createDeatLineText(listItem);
     deleteTasksClick(deleteButton);
     doneTasksClick(doneButton);
+    return deadLineText;
 };
 // 入力したタスク内容の追加
 const createAddTask = (task) => {
@@ -67,6 +135,14 @@ const createAddTask = (task) => {
     listItem.appendChild(pItem);
     pItem.innerHTML = task;
     return listItem;
+}
+//入力したタスクの期限日を追加
+const deadLineAdd = () => {
+    const deadLineYear = select_year.value;
+    const deadLineMonth = select_month.value;
+    const deadLineDate = select_day.value;
+    const deadLine = deadLineYear + "年" + deadLineMonth + "月" + deadLineDate + "日";
+    return deadLine;
 }
 
 /* ---------------
@@ -96,7 +172,6 @@ const doneTasksClick = (doneButton) => {
     });
 }
 
-// 削除ボタンをクリックした時の確認
 
 
 /* ---------------
@@ -125,6 +200,7 @@ const showTasksStorage = () => {
         const listItem = showTaskList(item);
         const deleteButton = createDeleteButton(listItem);
         const doneButton = createDoneButton(listItem);
+        showDeadLine(item, listItem)
         showDoneTaskList(item,doneButton);
         deleteTasksClick(deleteButton);
         doneTasksClick(doneButton);
@@ -144,14 +220,24 @@ const showTaskList = (item) => {
     pItem.appendChild(stock_task);
     return listItem;
 }
+// ローカルストレージの保存内容の表示内容の作成
+const showDeadLine = (item, listItem) => {
+    const stock_deadLine = document.createTextNode(item.deadLine);
+    const pItem = document.createElement("p");
+    pItem.setAttribute('class', 'js_deadline');
+    listItem.appendChild(pItem);
+    pItem.appendChild(stock_deadLine);
+}
 // タスクをローカルストレージへ追加
 const addTaskStorage = () => {
     const task = taskValue.value;
+    const deadLine = "期限日: " + deadLineAdd();
     if (task){
         const item = {
             todoValue: task,
             isDeleted: false,
-            isDone: false
+            isDone: false,
+            deadLine: deadLine
         };
         listItems.push(item);
         storage.store = JSON.stringify(listItems);
