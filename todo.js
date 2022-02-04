@@ -61,20 +61,13 @@ selectYearBox.addEventListener("change", e => {
 let listItems = [];
 const storage = localStorage;
 
-// ローカルストレージの保存内容を表示
-document.addEventListener("DOMContentLoaded", () => {
-    queryTasksStorage();
-    showTasksStorage();
-    console.log(listItems);
-});
-
 /* ---------------
 ボタン作成
 ----------------*/
 const createButton = () => {
     const createButton = document.createElement("button");
     return createButton;
-} 
+}
 
 // 追加したタスクに削除ボタンを付与
 const createDeleteButton = (listItem) => {
@@ -192,21 +185,25 @@ const doneTasks = (doneButton) => {
 /* ---------------
 ストレージ処理
 ----------------*/
-// ローカルストレージの保存内容の表示
-const showTasksStorage = () => {
-    for (const item of listItems) {
-        const listItem = showTaskList(item);
-        const deleteButton = createDeleteButton(listItem);
-        const doneButton = createDoneButton(listItem);
-        showDeadLine(item, listItem)
-        showDoneTaskList(item,doneButton);
-        deleteTasksClick(deleteButton);
-        doneTasksClick(doneButton);
-    }
-}
 //ローカルストレージの保存内容の取得
 const queryTasksStorage = () => {
-    listItems = storage.store && JSON.parse(storage.store);    
+    queryListItems = storage.store && JSON.parse(storage.store);
+    listItems = queryListItems ? queryListItems: [];
+    return listItems;
+}
+// ローカルストレージの保存内容の表示
+const showTasksStorage = () => {
+    if (listItems.length !== 0) {
+        for (const item of listItems) {
+            const listItem = showTaskList(item);
+            const deleteButton = createDeleteButton(listItem);
+            const doneButton = createDoneButton(listItem);
+            showDeadLine(item, listItem)
+            showDoneTaskList(item,doneButton);
+            deleteTasksClick(deleteButton);
+            doneTasksClick(doneButton);
+        }
+    }
 }
 // ローカルストレージの保存内容の表示内容の作成
 const showTaskList = (item) => {
@@ -283,3 +280,11 @@ const deleteTasksStorage = (deleteButton) => {
     listItems = newlistItems;
     storage.store = JSON.stringify(listItems);
 }
+
+// ローカルストレージの保存内容を表示
+document.addEventListener("DOMContentLoaded", () => {
+    // if (listItems.length !== 0) {
+        queryTasksStorage();
+        showTasksStorage();
+    // }
+});
