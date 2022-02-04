@@ -67,7 +67,7 @@ const storage = localStorage;
 const createButton = () => {
     const createButton = document.createElement("button");
     return createButton;
-} 
+}
 
 // 追加したタスクに削除ボタンを付与
 const createDeleteButton = (listItem) => {
