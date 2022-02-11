@@ -121,6 +121,7 @@ const addTasks = (task) => {
 // 入力したタスク内容の追加
 const createAddTask = (task) => {
     const pItem = document.createElement("p");
+    pItem.setAttribute('class', 'js_todo');
     const listItem = document.createElement("li");
     taskList.appendChild(listItem);
     listItem.appendChild(pItem);
@@ -210,6 +211,7 @@ const showTaskList = (item) => {
     const stock_task = document.createTextNode(item.todoValue);
     const listItem = document.createElement("li");
     const pItem = document.createElement("p");
+    pItem.setAttribute('class', 'js_todo');
     taskList.appendChild(listItem);
     listItem.appendChild(pItem);
     pItem.appendChild(stock_task);
